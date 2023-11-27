@@ -1,0 +1,240 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Calculator App',
+      theme: ThemeData.dark(),
+      debugShowCheckedModeBanner: false,
+      home: const CalculatorScreen(),
+    );
+  }
+}
+
+class CalculatorScreen extends StatefulWidget {
+  const CalculatorScreen({super.key});
+
+  @override
+  _CalculatorScreenState createState() => _CalculatorScreenState();
+}
+
+class _CalculatorScreenState extends State<CalculatorScreen> {
+  bool chkclear= false;
+  String display = '0';
+  double num1 = 0;
+  double num2 = 0;
+  String operator = '';
+  String result = '';
+
+  void onNumberPress(String digit) {
+    setState(() {
+      if (display == '0') {
+        display = digit;
+      } else {
+        if(chkclear) {
+          display = digit;
+        }else {
+          display += digit;
+        }
+      }
+    }
+
+
+
+        // if (display == '0') {
+        //   display = digit;
+        // }
+        // else {
+        //   if(chkclear)
+        //     {display='0';
+        //       chkclear=false;}
+        //   display += digit;}
+        // }
+
+
+    );}
+
+
+  void onOperatorPress(String newoperator) {
+    setState(() {
+      if (operator.isNotEmpty) {//there's already a num1
+        num2 = double.parse(display);
+        switch (operator) {
+          case '+':
+            result = (num1 + num2).toString();
+            break;
+          case '-':
+            result = (num1 - num2).toString();
+            break;
+          case 'x':
+            result = (num1 * num2).toString();
+            break;
+          case '/':
+            result = (num1 / num2).toString();
+            break;
+        }
+        display = result;
+        num1 = double.parse(display);//setting num1 equal to this so that later calc on it will be num2
+        operator = '';
+      } else {
+        num1 = double.parse(display);
+        operator = newoperator;
+        display = '0';
+      }
+    });
+  }
+
+  void onEqualsPress() {
+    setState(() {
+
+
+      num2 = double.parse(display);
+      switch (operator) {
+        case '+':
+          result = (num1 + num2).toString();
+          break;
+        case '-':
+          result = (num1 - num2).toString();
+          break;
+        case 'x':
+          result = (num1 * num2).toString();
+          break;
+        case '/':
+          result = (num1 / num2).toString();
+          break;
+      }
+      display = result;
+      num1 = double.parse(display);
+      chkclear=true;
+      operator = '';
+    });
+  }
+
+  void onClearPress() {
+    setState(() {
+      display = '0';
+      num1 = 0;
+      num2 = 0;
+      operator = '';
+      result = '';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Calculator'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              alignment: Alignment.bottomRight,
+              padding: const EdgeInsets.all(8.0),
+              margin: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+              child: Text(
+                display,
+                style: const TextStyle(fontSize: 36.0, color: Colors.black), // Set text color to black
+              ),
+            ),
+          ),
+          Row( //UI of calculator
+            children: [
+              const SizedBox(width:4),
+              buildButton('7'),
+              const SizedBox(width:4),
+              buildButton('8'),
+              const SizedBox(width:4),
+              buildButton('9'),
+              const SizedBox(width:4),
+              buildButton('/', color: Colors.amber),
+            ],
+          ),
+          const SizedBox(height:4),
+          Row(
+            children: [
+              const SizedBox(width:4),
+              buildButton('4'),
+              const SizedBox(width:4),
+              buildButton('5'),
+              const SizedBox(width:4),
+              buildButton('6'),
+              const SizedBox(width:4),
+              buildButton('x', color: Colors.amber),
+            ],
+          ),
+          const SizedBox(height:4),
+          Row(
+            children: [
+              const SizedBox(width:4),
+              buildButton('1'),
+              const SizedBox(width:4),
+              buildButton('2'),
+              const SizedBox(width:4),
+              buildButton('3'),
+              const SizedBox(width:4),
+              buildButton('-', color: Colors.amber),
+            ],
+          ),
+          const SizedBox(height:4),
+          Row(
+            children: [
+              const SizedBox(width:4),
+              buildButton('0'),
+              const SizedBox(width:4),
+              buildButton('.', color: Colors.amber),
+              const SizedBox(width:4),
+              buildButton('+', color: Colors.amber),
+              const SizedBox(width:4),
+            ],
+          ),
+          const SizedBox(height:4),
+          Row(
+            children: [
+              const SizedBox(width:4),
+              buildButton('AC', color: Colors.orangeAccent),
+              const SizedBox(width:4),
+              buildButton('=', color: Colors.orangeAccent),
+              const SizedBox(width:4),
+            ],
+          ),
+        ],
+      ),
+    );
+  }//layout of buttons
+
+  Widget buildButton(String buttonText, {Color? color}) {//building the buttons
+    return Expanded(
+      child: TextButton(
+        onPressed: ()
+    {
+
+         if (buttonText == 'AC') {
+           onClearPress();
+          } else if (buttonText == '=') {
+            onEqualsPress();
+          } else if (buttonText == '/' || buttonText == 'x' || buttonText == '-' || buttonText == '+') {
+            onOperatorPress(buttonText);
+          } else {
+            onNumberPress(buttonText);
+          }
+        },
+        style: TextButton.styleFrom(
+          backgroundColor: color ?? Theme.of(context).colorScheme.background,
+        ),
+        child: Text(
+          buttonText,
+          style: const TextStyle(fontSize: 24.0, color: Colors.black), // Set button text color to black
+        ),
+      ),
+    );
+  }
+}
